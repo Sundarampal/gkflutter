@@ -33,7 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _loadData() async {
     final data = await Utilities.downloadJson(
-      'https://sundarampal.github.io/myjsonfiles/chat.json',
+      'https://sundarampal.github.io/myjsonfiles/chatbox.json',
     );
 
     List chats = data['chats'];
