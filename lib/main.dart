@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'utilities.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,137 +24,89 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final TextEditingController senderCtrl = TextEditingController();
-  final TextEditingController receiverCtrl = TextEditingController();
-  final TextEditingController messageCtrl = TextEditingController();
+  final TextEditingController fromCtrl = TextEditingController();
+  final TextEditingController toCtrl = TextEditingController();
+  final TextEditingController msgCtrl = TextEditingController();
 
-  List<Map<String, String>> chatHistory = [];
+  /// JSON based chat data
+  List<Map<String, String>> messages = [
+    {"from": "A", "to": "B", "text": "Hello"},
+    {"from": "B", "to": "A", "text": "Hi"},
+  ];
 
-  Future<void> _loadData() async {
-    final data = await Utilities.downloadJson(
-      'https://sundarampal.github.io/myjsonfiles/chatbox.json',
-    );
-
-    List chats = data['chats'];
-
-    setState(() {
-      chatHistory = chats
-          .map((e) => {
-        "sender": e['sender'].toString(),
-        "receiver": e['receiver'].toString(),
-        "message": e['message'].toString(),
-      })
-          .toList();
-    });
-  }
-
-  void _sendMessage() {
-    if (senderCtrl.text.isEmpty ||
-        receiverCtrl.text.isEmpty ||
-        messageCtrl.text.isEmpty) return;
+  void sendMessage() {
+    if (fromCtrl.text.isEmpty ||
+        toCtrl.text.isEmpty ||
+        msgCtrl.text.isEmpty) return;
 
     setState(() {
-      chatHistory.add({
-        "sender": senderCtrl.text,
-        "receiver": receiverCtrl.text,
-        "message": messageCtrl.text,
+      messages.add({
+        "from": fromCtrl.text,
+        "to": toCtrl.text,
+        "text": msgCtrl.text,
       });
     });
 
-    messageCtrl.clear();
-  }
-
-  void _showChat() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ChatHistoryScreen(chatHistory: chatHistory),
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
+    msgCtrl.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Editable Chat JSON")),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            _input(senderCtrl, "Sender Name", Colors.blue[100]!),
-            _input(receiverCtrl, "Receiver Name", Colors.green[100]!),
-            _input(messageCtrl, "Message", Colors.grey[200]!),
-
-            Row(
+      appBar: AppBar(title: const Text("JSON Chat")),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
               children: [
-                Expanded(
+                inputBox(fromCtrl, "From"),
+                inputBox(toCtrl, "To"),
+                inputBox(msgCtrl, "Message"),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _sendMessage,
+                    onPressed: sendMessage,
                     child: const Text("Send"),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _showChat,
-                    child: const Text("Show Chat"),
                   ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          const Divider(),
+          Expanded(
+            child: ListView.builder(
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                final msg = messages[index];
+                return ListTile(
+                  leading: CircleAvatar(
+                    child: Text(msg['from']!),
+                  ),
+                  title: Text(msg['text']!),
+                  subtitle:
+                  Text("${msg['from']} ➜ ${msg['to']}"),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _input(TextEditingController c, String label, Color color) {
+  Widget inputBox(TextEditingController c, String label) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 8),
       child: TextField(
         controller: c,
         decoration: InputDecoration(
           labelText: label,
-          filled: true,
-          fillColor: color,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ChatHistoryScreen extends StatelessWidget {
-  final List<Map<String, String>> chatHistory;
-
-  const ChatHistoryScreen({super.key, required this.chatHistory});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Chat History")),
-      body: chatHistory.isEmpty
-          ? const Center(child: Text("No messages"))
-          : ListView.builder(
-        itemCount: chatHistory.length,
-        itemBuilder: (context, index) {
-          final chat = chatHistory[index];
-          return Card(
-            child: ListTile(
-              title: Text(chat['message']!),
-              subtitle:
-              Text("${chat['sender']} ➜ ${chat['receiver']}"),
-            ),
-          );
-        },
       ),
     );
   }
