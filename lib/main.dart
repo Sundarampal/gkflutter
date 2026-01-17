@@ -31,7 +31,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   List<Map<String, String>> chatHistory = [];
 
-  /// 🔥 JSON LOAD (EXAMLIST STYLE)
   Future<void> _loadData() async {
     final data = await Utilities.downloadJson(
       'https://sundarampal.github.io/myjsonfiles/chat.json',
@@ -50,7 +49,6 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  /// SEND MESSAGE
   void _sendMessage() {
     if (senderCtrl.text.isEmpty ||
         receiverCtrl.text.isEmpty ||
@@ -67,7 +65,6 @@ class _ChatScreenState extends State<ChatScreen> {
     messageCtrl.clear();
   }
 
-  /// SHOW CHAT SCREEN
   void _showChat() {
     Navigator.push(
       context,
@@ -80,7 +77,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData(); // AUTO LOAD JSON
+    _loadData();
   }
 
   @override
