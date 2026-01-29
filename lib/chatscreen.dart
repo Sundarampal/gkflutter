@@ -30,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final toCtrl = TextEditingController();
   final textCtrl = TextEditingController();
 
+  // 🔹 JSON DATA
   Map<String, dynamic> jsonData = {
     "messages": [
       {"from": "A", "to": "B", "text": "Hello"},
@@ -41,6 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool loading = true;
   String info = "";
 
+  // 🔹 LOAD JSON FROM API
   Future<void> loadJson() async {
     try {
       final res = await http.get(
@@ -53,8 +55,10 @@ class _ChatScreenState extends State<ChatScreen> {
         final decoded = jsonDecode(res.body);
 
         if (decoded["messages"] is List) {
-          jsonData = decoded;
-          info = "Loaded from API";
+          setState(() {
+            jsonData = decoded;
+            info = "Loaded from API";
+          });
         }
       } else {
         info = "API invalid → Local JSON";
@@ -68,13 +72,14 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  // 🔹 ADD MESSAGE TO JSON
   void addMessage() {
     if (fromCtrl.text.isEmpty ||
         toCtrl.text.isEmpty ||
         textCtrl.text.isEmpty) return;
 
     setState(() {
-      jsonData["messages"].add({
+      (jsonData["messages"] as List).add({
         "from": fromCtrl.text,
         "to": toCtrl.text,
         "text": textCtrl.text,
@@ -94,11 +99,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final messages = jsonData["messages"] as List;
+    final List messages = jsonData["messages"];
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Chat Messages"),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -123,7 +129,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
           Text(
             info,
-            style: const TextStyle(color: Colors.green),
+            style: const TextStyle(
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
           ),
 
           const Divider(),
@@ -143,7 +152,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(12),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                      CrossAxisAlignment.start,
                       children: [
                         Text(
                           "From: ${msg["from"]}",
@@ -169,6 +179,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  // 🔹 INPUT FIELD
   Widget input(TextEditingController c, String hint) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
