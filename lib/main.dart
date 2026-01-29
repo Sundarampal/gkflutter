@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'chatscreen.dart';
-import 'utilities.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +11,32 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ChatScreen(),
+      home: SimplePage(),
+    );
+  }
+}
+
+class SimplePage extends StatelessWidget {
+  const SimplePage({super.key});
+Future<List<dynamic>> fetchjson() async {
+  final response = await http.get (
+    Uri.parse('')
+  )
+}
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Simple Page"),
+        centerTitle: true,
+      ),
+      body: Center(
+        child:ElevatedButton(onPressed: (){}, child: const Text(
+          "Hello Flutter ",
+         ),
+        ),
+      ),
+
     );
   }
 }
