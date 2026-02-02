@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:gkflutter/utilities.dart';
 
 void main() {
+
+  Future<void>loadData() async {
+    try {
+      final data = await Utilities.downloadJson(
+        "https://sundarampal.github.io/myjsonfiles/chatbox.json",
+      );
+
+    } catch (e) {
+      print("hii");
+    }
+  }
   runApp(const MyApp());
 }
 
@@ -11,32 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SimplePage(),
-    );
-  }
-}
-
-class SimplePage extends StatelessWidget {
-  const SimplePage({super.key});
-Future<List<dynamic>> fetchjson() async {
-  final response = await http.get (
-    Uri.parse('')
-  )
-}
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Simple Page"),
-        centerTitle: true,
-      ),
-      body: Center(
-        child:ElevatedButton(onPressed: (){}, child: const Text(
-          "Hello Flutter ",
-         ),
-        ),
-      ),
-
+      home: MyApp(),
     );
   }
 }
